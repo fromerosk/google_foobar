@@ -1,0 +1,68 @@
+package com.company;
+import java.util.HashSet;
+
+public class Main {
+
+    public static void main(String[] args) {
+	// write your code here
+    }
+
+    public static String answer(String[] words) {
+        HashSet<String> set = new HashSet<String>();
+        for(int i = 0; i < words.length-1; i++)
+        {
+            int deep = 0;
+            while(deep < words[i].length() && deep < words[i+1].length())
+            {
+                String c1 = words[i].substring(deep,deep + 1);
+                String c2 = words[i+1].substring(deep,deep + 1);
+                if(!c1.equals(c2))
+                {
+                    set.add(c1+c2);
+                    break;
+                }
+                deep++;
+            }
+        }
+        String alphabet = "";
+        while(true)
+        {
+            boolean changed = false;
+            for(String s : set)
+            {
+                String s1 = s.substring(0,1);
+                String s2 = s.substring(1,2);
+                int i1 = alphabet.indexOf(s1);
+                int i2 = alphabet.indexOf(s2);
+                if(i1 == -1)
+                {
+                    if(i2 == -1){
+                        alphabet = alphabet + s;
+                        changed = true;
+                    }
+                    else{
+                        alphabet = alphabet.replaceAll(s2, s);
+                        changed = true;
+                    }
+                }
+                else
+                {
+                    if(i2 == -1){
+                        alphabet = alphabet.replaceAll(s1, s);
+                        changed = true;
+                    }
+                    else if(i1 > i2)
+                    {
+                        alphabet = alphabet.replaceAll(s2,"");
+                        alphabet = alphabet.replaceAll(s1, s);
+                        changed = true;
+                    }
+                }
+            }
+            if(!changed) break;
+        }
+        return alphabet;
+    }
+
+}
+}

@@ -1,0 +1,48 @@
+package com.google.challenges; 
+import java.util.Arrays;
+
+public class Answer {   
+    public static int answer(int[][] intervals) { 
+        
+        int[][] merged_intervals = new int[intervals.length][];
+        merged_intervals[0] = intervals[0];
+        int newIntervalsCount = 1;
+        
+        for(int i = 1; i < intervals.length; i++)
+        {
+            boolean merged = false;
+            for(int j = 0; j < newIntervalsCount; j++)
+            {
+                if(intervals[i][0] <= merged_intervals[j][1] && intervals[i][1] >= merged_intervals[j][0])
+                {
+                    if(intervals[i][0] < merged_intervals[j][0]) //do merge start
+                        merged_intervals[j][0] = intervals[i][0];
+                        
+                    if(intervals[i][1] > merged_intervals[j][1]) //do merge end
+                        merged_intervals[j][1] = intervals[i][1];
+                    
+                    merged = true;
+                    break;
+                }
+            }
+            if(!merged)
+            {
+                merged_intervals[newIntervalsCount] = new int[] { intervals[i][0], intervals[i][1] };
+                newIntervalsCount++;
+            }
+        }
+        
+        if(newIntervalsCount == intervals.length) //nothing merged
+        {
+            int totTime = 0;
+            for(int i = 0; i < newIntervalsCount; i++)
+            {
+                totTime += merged_intervals[i][1] - merged_intervals[i][0];
+            }
+            return totTime;
+        }
+        else{
+            return answer(Arrays.copyOfRange(merged_intervals, 0, newIntervalsCount));
+        }
+    } 
+}

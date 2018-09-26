@@ -1,0 +1,59 @@
+package com.google.challenges; 
+import java.util.HashMap;
+import java.util.HashSet;
+
+public class Answer {   
+    public static String answer(String document, String[] searchTerms) { 
+		HashMap<String, HashSet<Integer>> stStats = new HashMap<String, HashSet<Integer>>();
+		for(String st : searchTerms)
+			stStats.put(st, new HashSet<Integer>());
+
+		int idx = 0;
+		String[] words = document.split(" ");
+		for(String w : words){
+			HashSet stats = stStats.get(w);
+			if(stats != null)
+				stats.add(idx);
+			idx++;
+		}
+		
+		int totComb = 1;
+		for(HashSet<Integer> sets : stStats.values())
+			totComb = totComb * sets.size();
+		
+		int[][] combinations = new int[totComb][];
+		for(int i = 0; i < totComb; i++)
+			combinations[i] = new int[] { Integer.MAX_VALUE, Integer.MIN_VALUE };
+
+		int processedCombs = 1;		
+		
+		for(HashSet<Integer> set : stStats.values()){
+			int[][] newCombinations = new int[totComb][];
+			for(int i = 0; i < totComb; i++)
+				newCombinations[i] = new int[] { Integer.MAX_VALUE, Integer.MIN_VALUE };
+
+			int setIdx = 0;
+			for(Integer v : set){
+				for(int i = 0; i < processedCombs; i++){ //time limit exceeded from here
+					newCombinations[setIdx][0] = v < combinations[i][0] ? v :  combinations[i][0];
+					newCombinations[setIdx][1] = v > combinations[i][1] ? v :  combinations[i][1];
+					setIdx++;
+				} // to here
+			}
+			processedCombs = setIdx;
+			combinations = newCombinations;
+		}
+		
+		int from = 0; int to = 0 ; int range = Integer.MAX_VALUE;
+		for(int[] c : combinations)
+			if(c[1] - c[0] < range){
+				from = c[0]; to = c[1]; range = c[1] - c[0];
+			}
+		
+		String snippet = "";
+		for(int i = from; i < to + 1; i++)
+			snippet += words[i] + " ";
+
+        return snippet.trim();
+    } 
+}
